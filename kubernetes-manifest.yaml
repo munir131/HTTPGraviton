@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: httpgraviton
-        image: <your-docker-image> # Replace with your Docker image
+        image: munir131/httpgraviton
         ports:
         - containerPort: 8080
 ---
