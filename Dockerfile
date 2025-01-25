@@ -1,0 +1,32 @@
+# Use the official Golang image as a build stage
+FROM golang:1.20 AS builder
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the Go modules manifests
+COPY go.mod go.sum ./
+
+# Download the Go modules
+RUN go mod download
+
+# Copy the source code
+COPY . .
+
+# Build the Go application
+RUN go build -o httpgraviton main.go
+
+# Use a minimal base image for the final image
+FROM alpine:latest
+
+# Copy the binary from the builder stage
+COPY --from=builder /app/httpgraviton /usr/local/bin/httpgraviton
+
+# Set the default port environment variable
+ENV PORT=8080
+
+# Expose the port the app runs on
+EXPOSE 8080
+
+# Command to run the executable
+CMD ["httpgraviton"] 

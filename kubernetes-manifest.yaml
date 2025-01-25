@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpgraviton
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: httpgraviton
+  template:
+    metadata:
+      labels:
+        app: httpgraviton
+    spec:
+      containers:
+      - name: httpgraviton
+        image: <your-docker-image> # Replace with your Docker image
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: httpgraviton
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: httpgraviton 
