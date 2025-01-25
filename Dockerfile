@@ -14,13 +14,13 @@ RUN go mod download
 COPY . .
 
 # Build the Go application
-RUN go build -o httpgraviton main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o httpgraviton main.go
 
 # Use a minimal base image for the final image
 FROM alpine:latest
 
 # Copy the binary from the builder stage
-COPY --from=builder /app/httpgraviton /usr/local/bin/httpgraviton
+COPY --from=builder /app/httpgraviton /bin/httpgraviton
 
 # Set the default port environment variable
 ENV PORT=8080
