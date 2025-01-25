@@ -1,7 +1,8 @@
 package main
 
 import (
-    "fmt"
+    "encoding/json"
+    "io/ioutil"
     "log"
     "net/http"
     "os"
@@ -20,21 +21,29 @@ func main() {
 }
 
 func handleRequest(w http.ResponseWriter, r *http.Request) {
+    // Set the Content-Type header to application/json
+    w.Header().Set("Content-Type", "application/json")
+
     // Log the request details
     log.Printf("URL: %s", r.URL.Path)
     log.Printf("Method: %s", r.Method)
     log.Printf("Headers: %v", r.Header)
 
     // Read the request body
-    body := make([]byte, r.ContentLength)
-    _, err := r.Body.Read(body)
+    body, err := ioutil.ReadAll(r.Body)
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
+    defer r.Body.Close()
     log.Printf("Body: %s", body)
 
-    // Respond with the appropriate status code
+    // Create a response object
+    response := map[string]interface{}{
+        "status": "success",
+    }
+
+    // Respond with the appropriate status code and JSON response
     switch r.Method {
     case http.MethodGet:
         w.WriteHeader(http.StatusOK)
@@ -46,5 +55,9 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
         w.WriteHeader(http.StatusNoContent)
     default:
         http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+        return
     }
+
+    // Write the JSON response
+    json.NewEncoder(w).Encode(response)
 }

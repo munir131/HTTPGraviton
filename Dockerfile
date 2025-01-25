@@ -4,10 +4,10 @@ FROM golang:1.20 AS builder
 # Set the working directory
 WORKDIR /app
 
-# Copy the Go modules manifests
-COPY go.mod go.sum ./
+# Copy the Go modules manifest
+COPY go.mod ./
 
-# Download the Go modules
+# Download the Go modules (this will be empty if there are no external dependencies)
 RUN go mod download
 
 # Copy the source code
